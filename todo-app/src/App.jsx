@@ -1,25 +1,28 @@
 import { useState, useEffect } from 'react'
-import CategoryTabs from './components/CategoryTabs'
+import Sidebar from './components/Sidebar'
+import SearchBar from './components/SearchBar'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 import styles from './App.module.css'
-import { CATEGORIES } from './constants'
 
 function App() {
   const [todos, setTodos] = useState(() => {
     const saved = localStorage.getItem('todos')
     return saved ? JSON.parse(saved) : []
   })
-
   const [activeCategory, setActiveCategory] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
   }, [todos])
 
   function addTodo(title, category) {
-    setTodos([{ id: Date.now(), title, category, done: false, createdAt: new Date().toISOString() }, ...todos])
+    setTodos([
+      { id: Date.now(), title, category, done: false, createdAt: new Date().toISOString() },
+      ...todos,
+    ])
   }
 
   function toggleTodo(id) {
@@ -33,61 +36,47 @@ function App() {
   const visibleTodos = todos
     .filter(t => activeCategory === 'all' || t.category === activeCategory)
     .filter(t => statusFilter === 'all' || (statusFilter === 'done' ? t.done : !t.done))
+    .filter(t => t.title.toLowerCase().includes(search.toLowerCase()))
 
-  // Progress: scoped to the active category
-  const scopedTodos = todos.filter(t => activeCategory === 'all' || t.category === activeCategory)
-  const doneCount = scopedTodos.filter(t => t.done).length
-  const totalCount = scopedTodos.length
-  const progressPct = totalCount === 0 ? 0 : Math.round((doneCount / totalCount) * 100)
-
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+  const activeCount = todos.filter(t => !t.done).length
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
+    <div className={styles.layout}>
+      <Sidebar
+        todos={todos}
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+      />
 
-        <div className={styles.header}>
-          <h1 className={styles.title}>My <span>Todos</span></h1>
-          <p className={styles.subtitle}>{today}</p>
-        </div>
+      <main className={styles.main}>
+        <div className={styles.mainInner}>
 
-        {/* Progress bar */}
-        <div className={styles.progressWrapper}>
-          <div className={styles.progressHeader}>
-            <span>{doneCount} of {totalCount} completed</span>
-            <strong>{progressPct}%</strong>
+          <SearchBar value={search} onChange={setSearch} />
+
+          <TodoInput onAdd={addTodo} activeCategory={activeCategory} />
+
+          <div className={styles.statusRow}>
+            {['all', 'active', 'done'].map(s => (
+              <button
+                key={s}
+                className={`${styles.statusBtn} ${statusFilter === s ? styles.statusActive : ''}`}
+                onClick={() => setStatusFilter(s)}
+              >
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+            <span className={styles.remaining}>
+              {activeCount} remaining
+            </span>
           </div>
-          <div className={styles.progressBar}>
-            <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
-          </div>
+
+          <TodoList
+            todos={visibleTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
         </div>
-
-        <CategoryTabs
-          categories={CATEGORIES}
-          active={activeCategory}
-          onChange={setActiveCategory}
-        />
-
-        <TodoInput onAdd={addTodo} activeCategory={activeCategory} />
-
-        <div className={styles.statusRow}>
-          {['all', 'active', 'done'].map(s => (
-            <button
-              key={s}
-              className={`${styles.statusBtn} ${statusFilter === s ? styles.statusActive : ''}`}
-              onClick={() => setStatusFilter(s)}
-            >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        <TodoList todos={visibleTodos} onToggle={toggleTodo} onDelete={deleteTodo} />
-
-        <p className={styles.footer}>
-          {todos.filter(t => !t.done).length} item{todos.filter(t => !t.done).length !== 1 ? 's' : ''} remaining
-        </p>
-      </div>
+      </main>
     </div>
   )
 }
