@@ -7,6 +7,13 @@
       "runtimeArgs": ["serve", "."],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "Todo App (React)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "todo-app", "run", "dev", "--", "--host"],
+      "port": 5173,
+      "autoPort": true
     }
   ]
 }
