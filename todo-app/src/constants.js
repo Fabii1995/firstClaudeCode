@@ -1,7 +1,7 @@
 export const CATEGORIES = [
-  { id: 'all',      label: 'All',      color: '#6366f1' },
-  { id: 'work',     label: 'Work',     color: '#3b82f6' },
-  { id: 'home',     label: 'Home',     color: '#22c55e' },
-  { id: 'personal', label: 'Personal', color: '#a855f7' },
-  { id: 'other',    label: 'Other',    color: '#f97316' },
+  { id: 'all',      label: 'All Tasks', color: '#ffc887', icon: 'grid_view'  },
+  { id: 'work',     label: 'Work',      color: '#1dc4ff', icon: 'work'       },
+  { id: 'home',     label: 'Home',      color: '#4ADE80', icon: 'home'       },
+  { id: 'personal', label: 'Personal',  color: '#ffc887', icon: 'person'     },
+  { id: 'other',    label: 'Other',     color: '#f97316', icon: 'category'   },
 ]

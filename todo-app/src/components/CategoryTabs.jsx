@@ -1,20 +1,20 @@
-import { CATEGORIES } from '../constants'
-import styles from './CategoryTabs.module.css'
-
 function CategoryTabs({ categories, active, onChange }) {
   return (
-    <div className={styles.tabs}>
+    <nav className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-1">
       {categories.map(cat => (
         <button
           key={cat.id}
-          className={`${styles.tab} ${active === cat.id ? styles.tabActive : ''}`}
-          style={active === cat.id ? { borderColor: cat.color, background: cat.color } : {}}
           onClick={() => onChange(cat.id)}
+          className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+            active === cat.id
+              ? 'bg-primary text-on-primary'
+              : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+          }`}
         >
           {cat.label}
         </button>
       ))}
-    </div>
+    </nav>
   )
 }
 

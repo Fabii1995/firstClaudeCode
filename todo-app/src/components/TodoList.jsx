@@ -1,18 +1,17 @@
 import TodoItem from './TodoItem'
-import styles from './TodoList.module.css'
 
 function TodoList({ todos, onToggle, onDelete }) {
   if (todos.length === 0) {
     return (
-      <div className={styles.empty}>
-        <span className={styles.emptyIcon}>✦</span>
-        <span className={styles.emptyText}>Nothing here. Add something above.</span>
+      <div className="flex flex-col items-center justify-content py-20 gap-3 text-on-surface-variant">
+        <span className="material-symbols-outlined text-4xl opacity-30">task_alt</span>
+        <p className="font-headline text-lg font-bold tracking-tight opacity-40">Nothing here yet</p>
       </div>
     )
   }
 
   return (
-    <ul className={styles.list}>
+    <div className="flex flex-col gap-2">
       {todos.map(todo => (
         <TodoItem
           key={todo.id}
@@ -21,7 +20,7 @@ function TodoList({ todos, onToggle, onDelete }) {
           onDelete={onDelete}
         />
       ))}
-    </ul>
+    </div>
   )
 }
 
